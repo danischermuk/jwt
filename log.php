@@ -46,14 +46,14 @@ if (isset($_POST['user'])) {
   $password=$_POST['pass'];
   $MM_fldUserAuthorization = "";
   $MM_redirectLoginSuccess = "index.html#/home/";
-  $MM_redirectLoginFailed = "login.html?error";
+  $MM_redirectLoginFailed = "index.html#/login";
   $MM_redirecttoReferrer = false;
   mysqli_select_db( $drihm,$database_drihm);
   
   $LoginRS__query=sprintf("SELECT `username`, `password` FROM usuario WHERE `username`=%s AND `password`=%s",
-    GetSQLValueString($drihm, $loginUsername, "text"), GetSQLValueString($drihm, $password, "text")); 
+  GetSQLValueString($drihm, $loginUsername, "text"), GetSQLValueString($drihm, $password, "text")); 
      
-  $LoginRS = mysqli_query($drihm, $LoginRS__query) or die(mysqli_error());
+  $LoginRS = mysqli_query($drihm, $LoginRS__query) or die(mysqli_error($drihm));
   $loginFoundUser = mysqli_num_rows($LoginRS);
   mysqli_close($drihm);
   if ($loginFoundUser) {

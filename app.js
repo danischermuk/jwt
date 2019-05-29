@@ -3,7 +3,7 @@ var routerApp = angular.module('routerApp', ['ui.router']);
 
 routerApp.config(function ($stateProvider, $urlRouterProvider) {
 
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/home/');
 
     $stateProvider
 
@@ -12,79 +12,77 @@ routerApp.config(function ($stateProvider, $urlRouterProvider) {
             url: '/home/:jwttoken',
             templateUrl: 'templates/home.html',
             controller: 'adminCtrl'
-            ,resolve: {
-                token: ['$stateParams', 
+            , resolve: {
+                user: ['User', '$stateParams', function (User, $stateParams) {
+                    return User.checkAuthentication($stateParams.jwttoken);
+                }]
+                ,
+                token: ['$stateParams',
                     function ($stateParams) { return $stateParams.jwttoken; }]
             }
         })
 
         .state('productos', {
-            url: '/productos',
+            url: '/productos/:jwttoken',
             templateUrl: 'templates/productos.html',
             controller: 'adminCtrl'
-            ,resolve: {
-                token: ['$stateParams', 
+
+            , resolve: {
+                user: ['User', '$stateParams', function (User, $stateParams) {
+                    return User.checkAuthentication($stateParams.jwttoken);
+                }]
+                ,
+                token: ['$stateParams',
                     function ($stateParams) { return $stateParams.jwttoken; }]
             }
+
+        })
+
+        .state('login', {
+            url: '/login',
+            templateUrl: 'templates/login.html'
         })
 
 });
 
-routerApp.factory('User',function($http,$q){
-  
-   
-    
-    function _checkAuthentication(){
+routerApp.factory('User', function ($http, $q, $state) {
+
+
+
+    function _checkAuthentication(token) {
+        console.log("checking authentication with token: " + token);
         $http({
             url: 'app_client.php?token=',
             method: "GET",
             params: { token: token }
         }).then(function (response) {
             var data = response.data;
-            console.log(data.userID);
-            if (typeof(data.userID) === 'undefined') { console.log("exitos");
-            throw new Error('NOT_AUTHENTICATED'); }
+            console.log(data.userId);
+            if (typeof (data.userId) === 'undefined') {
+                console.log("no identificado, mando al login");
+                $state.go('login');
+            }
+            else { return $q.when(response.data.userId); }
+
         })
             .catch(function (response) {
                 console.error('error', response.status, response.data);
-                throw new Error('NOT_AUTHENTICATED');
-            })
-            .finally(function () {
-                console.error("finally");
-                return $q.when(response.data.userId);
-        
-            })
-            ;
-        
-        
+                $state.go('login');
+            });
     }
-    
-    
     return {
-      checkAuthentication : _checkAuthentication }
-    
-  })
-  
-  routerApp.run(function($rootScope,$state){
-  
-  
-    $rootScope.$on('$stateChangeError',function(ev,toState,toParams,fromState,fromParams,err){
-      
-      if(err.message === 'NOT_AUTHENTICATED'){
-        console.log('not authenticated, sending to login')
-        $location.path( "/login" )
-          }
-      
-    })
-    
-    
-  })  
+        checkAuthentication: _checkAuthentication
+    }
+
+})
 
 routerApp.controller('adminCtrl', ['$scope', '$location', '$http', 'token', function ($scope, $location, $http, token) {
     console.log("adminCtrl");
-    console.log(token);
 
-    var jwturl = 'app_client.php?token=' + token;
+
+    $scope.params.token = token;
+    console.log($scope.params.token);
+    var jwturl = 'LE HAGO UNA PEGADA A: app_client.php?token=' + token;
     console.log(jwturl);
     $http({
         url: 'app_client.php?token=',
@@ -93,13 +91,18 @@ routerApp.controller('adminCtrl', ['$scope', '$location', '$http', 'token', func
     }).then(function (response) {
         var data = response.data;
         console.log(data);
-        if (typeof(data.userId) !== 'undefined') { console.log("exitos"); }
+        if (typeof (data.userId) !== 'undefined') { console.log("exitos"); }
     })
         .catch(function (response) {
             console.error('error', response.status, response.data);
         })
         .finally(function () {
-            
+
         });
-    
+
+}]);
+
+routerApp.controller('mainCtrl', ['$scope', '$location', '$http', function ($scope, $location, $http) {
+    console.log("mainCtrl");
+    $scope.params = {};
 }]);

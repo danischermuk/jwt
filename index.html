@@ -18,23 +18,23 @@
 </head>
 
 <!-- apply our angular app to our site -->
-<body ng-app="routerApp">
+<body ng-app="routerApp" ng-controller="mainCtrl">
 
 <!-- NAVIGATION -->
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="navbar-header">
-        <a class="navbar-brand" ui-sref="home">AK Admin</a>
+        <a class="navbar-brand" ui-sref="home({'jwttoken': params.token})">AK Admin</a>
     </div>
     <ul class="nav navbar-nav">
-        <li><a ui-sref="rubros">Rubros</a></li>
-        <li><a ui-sref="productos">Productos</a></li>
-        <li><a ui-sref="establecimientos">Establecimientos</a></li>
-        <li><a ui-sref="usuarios">Usuarios</a></li>
+        <li><a ui-sref="rubros({'jwttoken': params.token})">Rubros</a></li>
+        <li><a ui-sref="productos({'jwttoken': params.token})">Productos</a></li>
+        <li><a ui-sref="establecimientos({'jwttoken': params.token})">Establecimientos</a></li>
+        <li><a ui-sref="usuarios({'jwttoken': params.token})">Usuarios</a></li>
     </ul>
 </nav>
 
 <!-- MAIN CONTENT -->
-<div class="container" >
+<div class="container"  >
 
     <!-- THIS IS WHERE WE WILL INJECT OUR CONTENT ============================== -->
     <div ui-view></div>
