@@ -76,7 +76,9 @@ if (isset($_POST['user'])) {
              * Uncomment the following line and add an appropriate date and time to enable the 
              * "expire" feature.
              */
-             // $exp = strtotime('2018-01-01 00:00:01');
+            $expdate = date('Y-m-d H:i:s');
+            
+            $exp = strtotime($expdate . ' +1 day');
 
             // Get our server-side secret key from a secure location.
             $serverKey = '5f2b5cdbe5194f10b3241568fe4e2b24';

@@ -57,7 +57,7 @@ routerApp.factory('User', function ($http, $q, $state) {
             params: { token: token }
         }).then(function (response) {
             var data = response.data;
-            console.log(data.userId);
+            console.log(data);
             if (typeof (data.userId) === 'undefined') {
                 console.log("no identificado, mando al login");
                 $state.go('login');

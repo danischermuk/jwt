@@ -1,36 +1,33 @@
 <?php 
 
 require_once('../Connections/drihm.php'); 
-require_once('jwt.php');
-
+require_once('Autho.php');
 $token = null;
         
         if (isset($_GET['token'])) {$token = $_GET['token'];}
 
-        if (!is_null($token)) {
-
-            require_once('jwt.php');
-
-            // Get our server-side secret key from a secure location.
-            $serverKey = '5f2b5cdbe5194f10b3241568fe4e2b24';
-
-            try {
-                $payload = JWT::decode($token, $serverKey, array('HS256'));
+        $user = Autho::checkJWT($token);
+        
+        if (!is_null($token.userId)) {
+            $requestMethod = $_SERVER['REQUEST_METHOD'];
+            // retrieve the inbound parameters based on request type.
+            switch($requestMethod) {
                 
-                    
-                    mysqli_select_db( $drihm,$database_drihm);
-                     
-                    $LoginRS__query=sprintf("SELECT * FROM products "); 
-                         
-                    $LoginRS = mysqli_query($drihm, $LoginRS__query) or die(mysqli_error());
-                    $loginFoundProducts = mysqli_num_rows($LoginRS);
-                    mysqli_close($drihm);
+                case 'GET':
+                    $query = 'SELECT ';
+                break;
 
-                    return json_encode($LoginRS, JSON_PRETTY_PRINT);
-                    
-            }
-            catch(Exception $e) {
-                $returnArray = array('error' => $e->getMessage());
+                case 'POST':
+                    $token = null;
+                    if (isset($_GET['token'])) {$token = $_GET['token'];}
+                    $jsonEncodedReturnArray = Autho::checkJWT($token);
+                    echo $jsonEncodedReturnArray;
+                break;
+                
+            default:
+                $returnArray = array('error' => 'You have requested an invalid method.');
+                $jsonEncodedReturnArray = json_encode($returnArray, JSON_PRETTY_PRINT);
+                echo $jsonEncodedReturnArray;
             }
         } 
         else {
