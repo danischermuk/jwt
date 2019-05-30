@@ -13,7 +13,7 @@ switch($requestMethod) {
     case 'GET':
         $token = null;
         if (isset($_GET['token'])) {$token = $_GET['token'];}
-        $jsonEncodedReturnArray = Autho::checkJWT($token);
+        $jsonEncodedReturnArray = Autho::getUserJWT($token);
         echo $jsonEncodedReturnArray;
         break;
 

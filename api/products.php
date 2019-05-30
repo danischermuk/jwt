@@ -6,7 +6,7 @@ $token = null;
         
         if (isset($_GET['token'])) {$token = $_GET['token'];}
 
-        $user = Autho::checkJWT($token);
+        $user = Autho::getUserJWT($token);
         
         if (!is_null($token.userId)) {
             $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -20,7 +20,7 @@ $token = null;
                 case 'POST':
                     $token = null;
                     if (isset($_GET['token'])) {$token = $_GET['token'];}
-                    $jsonEncodedReturnArray = Autho::checkJWT($token);
+                    $jsonEncodedReturnArray = Autho::getUserJWT($token);
                     echo $jsonEncodedReturnArray;
                 break;
                 

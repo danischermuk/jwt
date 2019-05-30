@@ -2,7 +2,7 @@
   class Autho {
 
 
-    public static function checkJWT($token) {
+    public static function getUserJWT($token) {
         if (!is_null($token)) {
 
             require_once('jwt.php');
@@ -30,5 +30,31 @@
         return $jsonEncodedReturnArray;
 
   }
+
+  public static function verifyJWT($token) {
+    if (!is_null($token)) {
+
+        require_once('jwt.php');
+
+        // Get our server-side secret key from a secure location.
+        $serverKey = '5f2b5cdbe5194f10b3241568fe4e2b24';
+
+        try {
+            $payload = JWT::decode($token, $serverKey, array('HS256'));
+            $returnArray = array('userId' => $payload->userId);
+            if (isset($payload->exp)) {
+                $returnArray['exp'] = date(DateTime::ISO8601, $payload->exp);;
+            }
+            return true;
+        }
+        catch(Exception $e) {
+            return false;
+        }
+    } 
+    else {
+        return false;
+    }
+
+}
 
 }
