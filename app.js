@@ -99,7 +99,8 @@ routerApp.factory('User', function ($http, $q, $state) {
 
 routerApp.factory('apiService', function ($http, $q, $state) {
 
-    var apiUrl = "/jwt/api/";
+    // var apiUrl = "/jwt/api/";
+    var apiUrl = "/jwt2/api/";
 
 
     // API DE RUBROS
@@ -146,6 +147,14 @@ routerApp.factory('apiService', function ($http, $q, $state) {
         });
     }
 
+    function _deleteProducto(token, id) {
+        console.log("deletting producto with id: " + id);
+        return $http({
+            url: apiUrl + "products.php",
+            method: "DELETE",
+            params: { token: token, id: id}
+        });
+    }
 
 
 
@@ -157,7 +166,8 @@ routerApp.factory('apiService', function ($http, $q, $state) {
         postRubro: _postRubro,
 
         // PRODUCTOS
-        getProductos:_getProductos
+        getProductos:_getProductos,
+        deleteProducto: _deleteProducto
 
     }
 
@@ -306,7 +316,7 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
         return $sce.trustAsHtml(html_code);
     };
 
-    $scope.showConfirmDelete = function (ev, rubro) {
+    $scope.showConfirmDeleteRubro = function (ev, rubro) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.confirm()
             .title('Seguro que quiere eliminar el rubro "' + rubro.nombre + '" ?')
@@ -315,11 +325,50 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
             .ok('Eliminar')
             .cancel('cancelar');
         $mdDialog.show(confirm).then(function () {
-            alert("eliminar");
-            console.log(apiService.deleteRubro($scope.params.token, rubro.id));
+            apiService.deleteRubro($scope.params.token, rubro.id);
+            setTimeout(function () {
+                $scope.$apply(function () {
+                    var response = apiService.getRubros($scope.params.token);
+                    response.success(function(data, status, headers, config) {
+                        $scope.rubros=data;
+                        console.log($scope.rubros);
+                    });
+                    response.error(function(data, status, headers, config) {
+                        alert("ERROR");
+                    });
+                });
+            }, 1000);
         }, function () {
             alert("no eliinar");
         });
     };
 
+    $scope.showConfirmDeleteProducto = function (ev, producto) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+            .title('Seguro que quiere eliminar el rubro "' + producto.nombre + '" ?')
+            .ariaLabel('Lucky day')
+            .targetEvent(ev)
+            .ok('Eliminar')
+            .cancel('cancelar');
+        $mdDialog.show(confirm).then(function () {
+            apiService.deleteProducto($scope.params.token, producto.id);
+            setTimeout(function () {
+                $scope.$apply(function () {
+                    var response = apiService.getProductos($scope.params.token);
+                    response.success(function(data, status, headers, config) {
+                        $scope.productos=data;
+                        console.log($scope.productos);
+                        console.log(response);
+
+                    });
+                    response.error(function(data, status, headers, config) {
+                        alert("ERROR");
+                    });
+                });
+            }, 1000);
+        }, function () {
+            alert("no eliinar");
+        });
+    };
 }]);

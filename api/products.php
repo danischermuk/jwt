@@ -16,7 +16,7 @@ $token = null;
                 case 'GET':
                     mysqli_select_db( $drihm,$database_drihm);
                     mysqli_set_charset($drihm, 'utf8');
-                    $query = "SELECT producto.id, producto.descripcion, producto.marca, producto.rubroId, codigo.nombre, codigo.codigo , lecheparve.nombre, lecheparve.codigo, rubro.nombre AS rubro FROM producto JOIN codigo ON producto.nivelId = codigo.id JOIN lecheparve ON producto.lecheparveId = lecheparve.id JOIN rubro ON producto.rubroId = rubro.id ORDER BY rubro, producto.descripcion";
+                    $query = "SELECT producto.id, producto.descripcion, producto.marca, producto.rubroId, codigo.nombre AS codigoNombre, codigo.codigo AS codigoCodigo , lecheparve.nombre AS lecheparve, lecheparve.codigo AS lecheparveCodigo, rubro.nombre AS rubro FROM producto JOIN codigo ON producto.nivelId = codigo.id JOIN lecheparve ON producto.lecheparveId = lecheparve.id JOIN rubro ON producto.rubroId = rubro.id ORDER BY rubro, producto.descripcion";
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     $loginFoundUser = mysqli_num_rows($result);
                     mysqli_close($drihm);

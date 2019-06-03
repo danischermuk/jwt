@@ -12,14 +12,23 @@
             <div class="pull-right">
                 <button type="button" class="btn btn-success">Añadir Producto en {{rubro.nombre.toUpperCase()}}</button>
                 <button type="button" class="btn btn-primary">Editar</button>
-                <button type="button" class="btn btn-danger" ng-click="showConfirmDelete(ev, rubro)">Eliminar</button>
+                <button type="button" class="btn btn-danger" ng-click="showConfirmDeleteRubro(ev, rubro)">Eliminar</button>
             </div>
         </div>
         <p ng-bind-html="renderHtml(rubro.descripcion)"></p>
-
+        <hr>
         <div ng-repeat="producto in productos | filter: {rubroId: rubro.id}:true">
             <div class="row">
-                <h5 class="pull-left"> {{producto.descripcion}}</h5>
+                <div class="pull-left">
+                    <h5> {{producto.descripcion}}</h5>
+                    <h5> {{producto.marca}}</h5>
+                    <h5> {{producto.codigoNombre}} {{producto.lecheparve}}</h5>
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-primary">Editar</button>
+                    <button type="button" class="btn btn-danger"
+                        ng-click="showConfirmDeleteProducto(ev, producto)">Eliminar</button>
+                </div>
             </div>
             <hr>
         </div>
