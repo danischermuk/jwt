@@ -152,7 +152,7 @@ routerApp.factory('apiService', function ($http, $q, $state) {
         return $http({
             url: apiUrl + "products.php",
             method: "DELETE",
-            params: { token: token, id: id}
+            params: { token: token, id: id }
         });
     }
 
@@ -166,7 +166,7 @@ routerApp.factory('apiService', function ($http, $q, $state) {
         postRubro: _postRubro,
 
         // PRODUCTOS
-        getProductos:_getProductos,
+        getProductos: _getProductos,
         deleteProducto: _deleteProducto
 
     }
@@ -202,64 +202,6 @@ routerApp.controller('adminCtrl', ['$scope', '$location', '$http', 'token', func
 routerApp.controller('mainCtrl', ['$scope', '$location', '$http', '$sce', function ($scope, $location, $http, $sce) {
     console.log("mainCtrl");
     $scope.params = {};
-
-    function removeAccents(value) {
-        return value
-            .replace(/á/g, 'a')
-            .replace(/é/g, 'e')
-            .replace(/í/g, 'i')
-            .replace(/ó/g, 'o')
-            .replace(/ú/g, 'u')
-            .replace(/Á/g, 'A')
-            .replace(/É/g, 'E')
-            .replace(/Í/g, 'I')
-            .replace(/Ó/g, 'O')
-            .replace(/Ú/g, 'U')
-            .replace(/ñ/g, 'n')
-            .replace(/Ñ/g, 'N');
-
-    }
-
-    $scope.ignoreAccentsProducto = function (item) {
-        if (!$scope.query)
-            return true;
-
-        var fullItem = item.producto + ' ' + item.rubro + ' ' + item.marca + ' ' + item.nivel;
-        var text = removeAccents(fullItem.toLowerCase());
-        var search = removeAccents($scope.query.toLowerCase());
-        var searchTextSplit = search.split(' ');
-
-        for (var y = 0; y < searchTextSplit.length; y++) {
-            if (text.indexOf(searchTextSplit[y]) == -1) {
-                return false;
-            }
-        }
-        return true;
-    };
-
-    $scope.ignoreAccentsRubro = function (item) {
-        if (!$scope.query)
-            return true;
-
-        var fullItem = item.title;
-        var text = removeAccents(fullItem.toLowerCase());
-        var search = removeAccents($scope.query.toLowerCase());
-        var searchTextSplit = search.split(' ');
-        var count = 0;
-        for (var y = 0; y < searchTextSplit.length; y++) {
-            if (text.indexOf(searchTextSplit[y]) !== -1) {
-                count++;
-            }
-        }
-        if (count == searchTextSplit.length)
-            return true;
-        else
-            return false;
-    };
-
-    $scope.renderHtml = function (html_code) {
-        return $sce.trustAsHtml(html_code);
-    };
 
 }]);
 
@@ -329,20 +271,20 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
             setTimeout(function () {
                 $scope.$apply(function () {
                     var response = apiService.getRubros($scope.params.token);
-                    response.success(function(data, status, headers, config) {
-                        $scope.rubros=data;
+                    response.success(function (data, status, headers, config) {
+                        $scope.rubros = data;
                         console.log($scope.rubros);
                     });
-                    response.error(function(data, status, headers, config) {
+                    response.error(function (data, status, headers, config) {
                         alert("ERROR");
                     });
 
                     var response = apiService.getProductos($scope.params.token);
-                    response.success(function(data, status, headers, config) {
-                        $scope.productos=data;
+                    response.success(function (data, status, headers, config) {
+                        $scope.productos = data;
                         console.log($scope.productos);
                     });
-                    response.error(function(data, status, headers, config) {
+                    response.error(function (data, status, headers, config) {
                         alert("ERROR");
                     });
 
@@ -366,13 +308,13 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
             setTimeout(function () {
                 $scope.$apply(function () {
                     var response = apiService.getProductos($scope.params.token);
-                    response.success(function(data, status, headers, config) {
-                        $scope.productos=data;
+                    response.success(function (data, status, headers, config) {
+                        $scope.productos = data;
                         console.log($scope.productos);
                         console.log(response);
 
                     });
-                    response.error(function(data, status, headers, config) {
+                    response.error(function (data, status, headers, config) {
                         alert("ERROR");
                     });
                 });
@@ -381,4 +323,21 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
             // alert("no eliinar");
         });
     };
+
+    $scope.editProductoDialog = function (producto) {
+        $mdDialog.show({
+            locals:{producto: producto},                
+            clickOutsideToClose: false,                
+            controllerAs: 'ctrl',                
+            templateUrl: 'templates/dialogs/producto-dialog.html',//+edit_id,
+            controller: mdProductoDialogCtrl,
+        });
+    };
+
+    var mdProductoDialogCtrl = function ($scope, producto) { 
+        console.log("ProductoDialogCtrl");
+        console.log(producto);
+    }
+
 }]);
+
