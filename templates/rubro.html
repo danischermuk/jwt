@@ -1,0 +1,27 @@
+<div class="container-flex" style="padding:15px">
+    <div class="row" style="padding-bottom: 30px">
+        <input id="query" ng-model="query" type="text" aria-label="Buscador" placeholder="Buscar"
+            style="padding-left:15px">
+        <button type="button" class="btn btn-success">Añadir Rubro</button>
+    </div>
+
+    <div ng-repeat="rubro in rubros | filter:ignoreAccentsRubro">
+        <hr style="height:1px;border:none;color:#333;background-color:#333;">
+        <div class="row">
+            <h4 class="pull-left"> {{rubro.nombre.toUpperCase()}}</h4>
+            <div class="pull-right">
+                <button type="button" class="btn btn-success">Añadir Producto en {{rubro.nombre.toUpperCase()}}</button>
+                <button type="button" class="btn btn-primary">Editar</button>
+                <button type="button" class="btn btn-danger" ng-click="showConfirmDelete(ev, rubro)">Eliminar</button>
+            </div>
+        </div>
+        <p ng-bind-html="renderHtml(rubro.descripcion)"></p>
+
+        <div ng-repeat="producto in productos | filter: {rubroId: rubro.id}:true">
+            <div class="row">
+                <h5 class="pull-left"> {{producto.descripcion}}</h5>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

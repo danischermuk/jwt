@@ -14,8 +14,10 @@ $token = null;
             switch($requestMethod) {
                 
                 case 'GET':
+                    if (isset($_GET['id'])) {$id = $_GET['id'];}
                     mysqli_select_db( $drihm,$database_drihm);
-                    $query = "SELECT * FROM usuario ";
+                    mysqli_set_charset($drihm, 'utf8');
+                    $query = "SELECT rubro.id, rubro.descripcion, rubro.nombre FROM rubro ORDER BY rubro.nombre";
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     $loginFoundUser = mysqli_num_rows($result);
                     mysqli_close($drihm);
@@ -28,17 +30,17 @@ $token = null;
                 break;
 
                 case 'POST':
-                    // EJEMPLO DE QUERY PARA INSERTAR O ACTUALIZAR DE UNA:
-                    // INSERT INTO `usuario` (`password`, `username`) VALUES( 'DANIEL', 'DANDANIEL3') ON DUPLICATE KEY UPDATE `password` = "DANDANIEL3"
 
-                    if (isset($_POST['token'])) {$token = $_POST['token'];} else return false;
-                    if (isset($_POST['username'])) {$username = $_POST['username'];} else return false;
-                    if (isset($_POST['password'])) {$password = $_POST['password'];} else return false;
+                    if (isset($_POST['id'])) {$id = $_POST['id'];} else return false;
+                    if (isset($_POST['nombre'])) {$nombre = $_POST['nombre'];} else return false;
+                    if (isset($_POST['descripcion'])) {$descripcion = $_POST['descripcion'];} else return false;
                                         
                     mysqli_select_db( $drihm,$database_drihm);
                     
-                    $query = sprintf("INSERT INTO `usuario` (`username`, `password`) VALUES( \"%s\", \"%s\") ON DUPLICATE KEY UPDATE `password` = \"%s\"",
-                    $username, $password, $password);
+                    $query = sprintf("INSERT INTO `rubro` (`id`, `nombre`, `descripcion`) VALUES( \"%s\", \"%s\", \"%s\") 
+                    ON DUPLICATE KEY UPDATE  `nombre`= \"%s\", `descripcion` = \"%s\"",
+                    
+                    $id, $nombre, $descripcion, $nombre, $descripcion);
 
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     mysqli_close($drihm);
@@ -48,11 +50,11 @@ $token = null;
                 
                 
                 case 'DELETE':
-                    if (isset($_GET['username'])) {$username = $_GET['username'];} else return false;
+                    if (isset($_GET['id'])) {$id = $_GET['id'];} else return false;
                     mysqli_select_db( $drihm,$database_drihm);
                     
-                    $query = sprintf("DELETE FROM `usuario` WHERE `username` = \"%s\"",
-                    $username);
+                    $query = sprintf("DELETE FROM `rubro` WHERE `id` = \"%s\"",
+                    $id);
                     
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     mysqli_close($drihm);
