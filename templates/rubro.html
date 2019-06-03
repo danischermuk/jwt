@@ -12,7 +12,8 @@
             <div class="pull-right">
                 <button type="button" class="btn btn-success">Añadir Producto en {{rubro.nombre.toUpperCase()}}</button>
                 <button type="button" class="btn btn-primary">Editar</button>
-                <button type="button" class="btn btn-danger" ng-click="showConfirmDeleteRubro(ev, rubro)">Eliminar</button>
+                <button type="button" class="btn btn-danger"
+                    ng-click="showConfirmDeleteRubro(ev, rubro)">Eliminar</button>
             </div>
         </div>
         <p ng-bind-html="renderHtml(rubro.descripcion)"></p>

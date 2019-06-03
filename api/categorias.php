@@ -53,6 +53,11 @@ $token = null;
                     if (isset($_GET['id'])) {$id = $_GET['id'];} else return false;
                     mysqli_select_db( $drihm,$database_drihm);
                     
+                    $query = sprintf("DELETE FROM `producto` WHERE `rubroId` = \"%s\"",
+                    $id);
+                    
+                    $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
+
                     $query = sprintf("DELETE FROM `rubro` WHERE `id` = \"%s\"",
                     $id);
                     

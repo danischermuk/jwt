@@ -319,7 +319,7 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
     $scope.showConfirmDeleteRubro = function (ev, rubro) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.confirm()
-            .title('Seguro que quiere eliminar el rubro "' + rubro.nombre + '" ?')
+            .title('Seguro que quiere eliminar el rubro "' + rubro.nombre + '"  y TODOS SUS PRODUCTOS ?')
             .ariaLabel('Lucky day')
             .targetEvent(ev)
             .ok('Eliminar')
@@ -336,10 +336,20 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
                     response.error(function(data, status, headers, config) {
                         alert("ERROR");
                     });
+
+                    var response = apiService.getProductos($scope.params.token);
+                    response.success(function(data, status, headers, config) {
+                        $scope.productos=data;
+                        console.log($scope.productos);
+                    });
+                    response.error(function(data, status, headers, config) {
+                        alert("ERROR");
+                    });
+
                 });
             }, 1000);
         }, function () {
-            alert("no eliinar");
+            // alert("no eliinar");
         });
     };
 
@@ -368,7 +378,7 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
                 });
             }, 1000);
         }, function () {
-            alert("no eliinar");
+            // alert("no eliinar");
         });
     };
 }]);
