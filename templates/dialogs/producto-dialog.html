@@ -1,0 +1,61 @@
+<md-dialog>
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{dialogTitle}}</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content style="min-width: 800px">
+            <div class="md-dialog-content">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Producto</label>
+                    <input ng-model="producto.descripcion">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                        <label>Rubro</label>
+                        <md-select ng-model="producto.rubroId">
+                            <md-option ng-repeat="rubro in rubros" value="{{rubro.id}}">
+                                {{rubro.nombre}}
+                            </md-option>
+                        </md-select>
+                </md-input-container>
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Marcas (separadas por coma)</label>
+                        <input ng-model="producto.marca">
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Tipo de Kashrut</label>
+                        <md-select ng-model="producto.codigoId">
+                            <md-option ng-repeat="nivel in niveles" value="{{nivel.id}}">
+                                {{nivel.nombre}} ({{nivel.codigo}})
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Lácteo-Parve</label>
+                        <md-select ng-model="producto.lecheparveId">
+                            <md-option ng-repeat="nivel in lecheparve" value="{{nivel.id}}">
+                                {{nivel.nombre}} ({{nivel.codigo}})
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="closeDialog()">
+                Cancelar
+            </md-button>
+            <md-button ng-click="saveProducto(producto)">
+                Guardar
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

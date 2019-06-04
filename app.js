@@ -56,6 +56,14 @@ routerApp.config(function ($stateProvider, $urlRouterProvider) {
                     return apiService.getProductos($stateParams.jwttoken);
                 }]
                 ,
+                niveles: ['apiService', '$stateParams', function (apiService, $stateParams) {
+                    return apiService.getNiveles($stateParams.jwttoken);
+                }]
+                ,
+                lecheparve: ['apiService', '$stateParams', function (apiService, $stateParams) {
+                    return apiService.getLecheparve($stateParams.jwttoken);
+                }]
+                ,
                 token: ['$stateParams',
                     function ($stateParams) { return $stateParams.jwttoken; }]
             }
@@ -99,8 +107,8 @@ routerApp.factory('User', function ($http, $q, $state) {
 
 routerApp.factory('apiService', function ($http, $q, $state) {
 
-    // var apiUrl = "/jwt/api/";
-    var apiUrl = "/jwt2/api/";
+    var apiUrl = "/jwt/api/";
+    //var apiUrl = "/jwt2/api/";
 
 
     // API DE RUBROS
@@ -156,6 +164,49 @@ routerApp.factory('apiService', function ($http, $q, $state) {
         });
     }
 
+    function _postProducto(token, producto) {
+        console.log("posting producto token: " + token);
+        var data = {
+            token: token,
+            id: producto.id,
+            marca: producto.marca,
+            imagen: producto.imagen,
+            rubroId: producto.rubroId,
+            nivelId: producto.nivelId,
+            lecheparve: producto.lecheparveId,
+            descripcion: producto.descripcion 
+        };
+        data = JSON.stringify(data);
+        return $http({
+            method: 'POST',
+            url: apiUrl + "products.php",
+            params: { token: token },
+            data: data,
+            timeout: 4000
+         });
+    }
+
+
+
+    // API DE NIVEL
+    function _getNiveles(token) {
+        console.log("getting nivel with token: " + token);
+        return $http({
+            url: apiUrl + "nivel.php",
+            method: "GET",
+            params: { token: token }
+        });
+    }
+
+    // API LECHEPARVE
+    function _getLecheparve(token) {
+        console.log("getting lecheparve with token: " + token);
+        return $http({
+            url: apiUrl + "lecheparve.php",
+            method: "GET",
+            params: { token: token }
+        });
+    }
 
 
 
@@ -167,8 +218,14 @@ routerApp.factory('apiService', function ($http, $q, $state) {
 
         // PRODUCTOS
         getProductos: _getProductos,
-        deleteProducto: _deleteProducto
+        deleteProducto: _deleteProducto,
+        postProducto: _postProducto,
 
+        // NIVEL
+        getNiveles: _getNiveles,
+
+        // LECHEPARVE
+        getLecheparve: _getLecheparve
     }
 
 })
@@ -199,20 +256,72 @@ routerApp.controller('adminCtrl', ['$scope', '$location', '$http', 'token', func
 
 }]);
 
-routerApp.controller('mainCtrl', ['$scope', '$location', '$http', '$sce', function ($scope, $location, $http, $sce) {
+routerApp.controller('mainCtrl', ['$scope', '$location', '$http', '$sce', '$timeout', "$mdSidenav", function ($scope, $location, $http, $sce, $timeout, $mdSidenav) {
     console.log("mainCtrl");
     $scope.params = {};
+    $scope.toggleLeft = buildDelayedToggler('left');
+    $scope.toggleRight = buildToggler('right');
+    $scope.isOpenRight = function () {
+        return $mdSidenav('right').isOpen();
+    };
+
+    /**
+     * Supplies a function that will continue to operate until the
+     * time is up.
+     */
+    function debounce(func, wait, context) {
+        var timer;
+
+        return function debounced() {
+            var context = $scope,
+                args = Array.prototype.slice.call(arguments);
+            $timeout.cancel(timer);
+            timer = $timeout(function () {
+                timer = undefined;
+                func.apply(context, args);
+            }, wait || 10);
+        };
+    }
+
+    /**
+     * Build handler to open/close a SideNav; when animation finishes
+     * report completion in console
+     */
+    function buildDelayedToggler(navID) {
+        return debounce(function () {
+            // Component lookup should always be available since we are not using `ng-if`
+            $mdSidenav(navID)
+                .toggle();
+        }, 200);
+    }
+
+    function buildToggler(navID) {
+        return function () {
+            // Component lookup should always be available since we are not using `ng-if`
+            $mdSidenav(navID)
+                .toggle();
+        };
+    }
+    $scope.close = function () {
+        // Component lookup should always be available since we are not using `ng-if`
+        $mdSidenav('right').close()
+            .then(function () {});
+    };
 
 }]);
 
-routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService', 'token', 'rubros', 'productos', '$sce', '$mdDialog', function ($scope, $location, $http, apiService, token, rubros, productos, $sce, $mdDialog) {
+routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService', 'token', 'rubros', 'productos', 'niveles', 'lecheparve', '$sce', '$mdDialog', function ($scope, $location, $http, apiService, token, rubros, productos, niveles, lecheparve, $sce, $mdDialog) {
     console.log("rubroCtrl");
     $scope.params.token = token;
     console.log(token);
     $scope.rubros = rubros.data;
     $scope.productos = productos.data;
+    $scope.niveles = niveles.data;
+    $scope.lecheparve = lecheparve.data;
     console.log($scope.rubros);
     console.log($scope.productos);
+    console.log($scope.niveles);
+    console.log($scope.lecheparve);
 
     function removeAccents(value) {
         return value
@@ -326,17 +435,43 @@ routerApp.controller('rubroCtrl', ['$scope', '$location', '$http', 'apiService',
 
     $scope.editProductoDialog = function (producto) {
         $mdDialog.show({
-            locals:{producto: producto},                
-            clickOutsideToClose: false,                
-            controllerAs: 'ctrl',                
+            locals: { producto: producto, niveles: $scope.niveles, lecheparve: $scope.lecheparve, rubros: $scope.rubros, token: $scope.params.token },
+            clickOutsideToClose: false,
+            controllerAs: 'ctrl',
             templateUrl: 'templates/dialogs/producto-dialog.html',//+edit_id,
             controller: mdProductoDialogCtrl,
+            fullscreen: true,
         });
     };
 
-    var mdProductoDialogCtrl = function ($scope, producto) { 
+    var mdProductoDialogCtrl = function ($scope, producto, niveles, lecheparve, rubros, token) {
         console.log("ProductoDialogCtrl");
-        console.log(producto);
+        $scope.niveles = niveles;
+        $scope.lecheparve = lecheparve;
+        $scope.rubros = rubros;
+        $scope.token = token;
+        console.log(lecheparve);
+        if (angular.isDefined(producto)) {
+            $scope.producto = producto;
+            $scope.dialogTitle = "Editar Producto";
+        }
+        else {
+            $scope.producto = {};
+            $scope.dialogTitle = "Agregar Producto";
+        }
+
+        $scope.closeDialog = function () {
+            $scope.producto = {};
+            $mdDialog.hide();
+        };
+
+        $scope.saveProducto = function (producto) {
+            $scope.prod = producto;
+            $scope.prod.imagen = "";
+            console.log($scope.prod);
+            console.log(apiService.postProducto($scope.token, $scope.prod));
+
+        };
     }
 
 }]);

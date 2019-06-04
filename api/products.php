@@ -16,7 +16,7 @@ $token = null;
                 case 'GET':
                     mysqli_select_db( $drihm,$database_drihm);
                     mysqli_set_charset($drihm, 'utf8');
-                    $query = "SELECT producto.id, producto.descripcion, producto.marca, producto.rubroId, codigo.nombre AS codigoNombre, codigo.codigo AS codigoCodigo , lecheparve.nombre AS lecheparve, lecheparve.codigo AS lecheparveCodigo, rubro.nombre AS rubro FROM producto JOIN codigo ON producto.nivelId = codigo.id JOIN lecheparve ON producto.lecheparveId = lecheparve.id JOIN rubro ON producto.rubroId = rubro.id ORDER BY rubro, producto.descripcion";
+                    $query = "SELECT producto.id, producto.descripcion, producto.marca, producto.rubroId, codigo.nombre AS codigoNombre, codigo.id AS codigoId, codigo.codigo AS codigoCodigo , lecheparve.id AS lecheparveId, lecheparve.nombre AS lecheparve, lecheparve.codigo AS lecheparveCodigo, rubro.nombre AS rubro FROM producto JOIN codigo ON producto.nivelId = codigo.id JOIN lecheparve ON producto.lecheparveId = lecheparve.id JOIN rubro ON producto.rubroId = rubro.id ORDER BY rubro, producto.descripcion";
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     $loginFoundUser = mysqli_num_rows($result);
                     mysqli_close($drihm);
@@ -31,13 +31,13 @@ $token = null;
                 case 'POST':
                     // CAMBIAR PARA PRODUCTO
 
-                    if (isset($_POST['id'])) {$id = $_POST['id'];} else return false;
-                    if (isset($_POST['marca'])) {$marca = $_POST['marca'];} else return false;
-                    if (isset($_POST['imagen'])) {$imagen = $_POST['imagen'];} else return false;
-                    if (isset($_POST['rubroId'])) {$rubroId = $_POST['rubroId'];} else return false;
-                    if (isset($_POST['nivelId'])) {$nivelId = $_POST['nivelId'];} else return false;
-                    if (isset($_POST['lecheparveId'])) {$lecheparveId = $_POST['lecheparveId'];} else return false;
-                    if (isset($_POST['descripcion'])) {$descripcion = $_POST['descripcion'];} else return false;
+                    if (isset($_POST['id'])) {$id = $_POST['id'];} else echo "falta id";
+                    if (isset($_POST['marca'])) {$marca = $_POST['marca'];} else echo "falta marca";
+                    if (isset($_POST['imagen'])) {$imagen = $_POST['imagen'];} else echo "falta imagen";
+                    if (isset($_POST['rubroId'])) {$rubroId = $_POST['rubroId'];} else echo "falta rubroId";
+                    if (isset($_POST['nivelId'])) {$nivelId = $_POST['nivelId'];} else echo "falta nivelId";
+                    if (isset($_POST['lecheparveId'])) {$lecheparveId = $_POST['lecheparveId'];} else echo "falta lecheparveId";
+                    if (isset($_POST['descripcion'])) {$descripcion = $_POST['descripcion'];} else echo "falta descripcion";
 
                                         
                     mysqli_select_db( $drihm,$database_drihm);

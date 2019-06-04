@@ -16,7 +16,7 @@ $token = null;
                 case 'GET':
                     mysqli_select_db( $drihm,$database_drihm);
                     mysqli_set_charset($drihm, 'utf8');
-                    $query = "SELECT codigo.id, codigo.descripcion, codigo.nombre FROM codigo";
+                    $query = "SELECT codigo.id, codigo.descripcion, codigo.nombre, codigo.codigo FROM codigo";
                     $result = mysqli_query($drihm, $query) or die(mysqli_error($drihm));
                     $loginFoundUser = mysqli_num_rows($result);
                     mysqli_close($drihm);
